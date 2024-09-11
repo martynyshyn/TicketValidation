@@ -96,7 +96,7 @@ class ScannerFragment : Fragment() {
                             Log.d(TAG, "QR Code URL detected: $url")  // Додано для налагодження
                             url?.let {
                                 parentFragmentManager.beginTransaction()
-                                    .replace(R.id.fragment_container, WebViewFragment.newInstance(it))
+                                    .replace(R.id.fragment_container, MainFragment.newInstance(it))
                                     .addToBackStack(null)
                                     .commit()
                             }

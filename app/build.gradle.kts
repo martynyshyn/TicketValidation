@@ -54,4 +54,13 @@ dependencies {
     implementation (libs.androidx.camera.camera2)
     implementation (libs.androidx.camera.lifecycle)
     implementation (libs.androidx.camera.view)
+
+    implementation (libs.core)
+    implementation (libs.info)
+    implementation (libs.option)
+    implementation (libs.input)
+    implementation (libs.easyprefs)
+
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
 }
