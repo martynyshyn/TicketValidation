@@ -10,9 +10,11 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.ticketvalidation.databinding.ActivityMainBinding
+import com.google.android.material.appbar.MaterialToolbar
 import com.maxkeppeler.sheets.core.SheetStyle
 import com.maxkeppeler.sheets.input.InputSheet
 import com.maxkeppeler.sheets.input.Validation
@@ -38,17 +40,14 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.title = "Ticket Validator"
 
-        binding.toolbar.title = "Ticket Validator"
-        binding.toolbar.subtitle = ""
         binding.toolbar.setTitleTextColor(Color.WHITE)
         binding.toolbar.setSubtitleTextColor(Color.WHITE)
         binding.toolbar.setBackgroundColor(resources.getColor(R.color.md_theme_light_primary))
-//        binding.toolbar.setLogoScaleType(ImageView.ScaleType.FIT_START)
-//        binding.toolbar.logo = ContextCompat.getDrawable(this, R.drawable.ic_action_name)
+        binding.toolbar.logo = ContextCompat.getDrawable(this, R.drawable.ic_action_logo)
 
         val appPrefs = Utils.getAppPreferences(this)
-
 
         if (appPrefs.token == "") {
             binding.fab.visibility = View.GONE
@@ -123,6 +122,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                             } else {
                                 Log.d(TAG, "Error: ${response.code()}")
+                                Log.d(TAG, "Response: ${response.body()}")
                             }
                         }
 
