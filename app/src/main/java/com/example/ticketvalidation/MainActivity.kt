@@ -8,25 +8,29 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.ticketvalidation.databinding.ActivityMainBinding
-import com.google.android.material.appbar.MaterialToolbar
+import com.maxkeppeler.sheets.core.IconButton
 import com.maxkeppeler.sheets.core.SheetStyle
+import com.maxkeppeler.sheets.info.InfoSheet
 import com.maxkeppeler.sheets.input.InputSheet
 import com.maxkeppeler.sheets.input.Validation
 import com.maxkeppeler.sheets.input.type.InputEditText
+import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
+import com.mikepenz.iconics.utils.colorInt
+import com.mikepenz.iconics.utils.sizeDp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var authForm: InputSheet
     private lateinit var binding: ActivityMainBinding
 
     @SuppressLint("SetTextI18n")
@@ -51,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         if (appPrefs.token == "") {
             binding.fab.visibility = View.GONE
-            InputSheet().show(this) {
+            authForm = InputSheet().build(this) {
                 title("Please, authorize")
                 with(InputEditText("user") {
                     required()
@@ -71,27 +75,16 @@ class MainActivity : AppCompatActivity() {
                     hint("Password")
                 })
                 onNegative {
-//                    activity?.finish()
-//                    exitProcess(0)
-                    // Продовжуємо роботу
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, MainFragment())
-                        .addToBackStack(null)
-                        .commit()
-                    binding.fab.setImageResource(android.R.drawable.ic_menu_camera)
-                    binding.fab.setOnClickListener {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, ScannerFragment())
-                            .addToBackStack(null)
-                            .commit()
-                    }
+                    // TODO:  Exit App?
                 }
+
                 onPositive { result: Bundle ->
 
-                    val u = result.getString("email")
+                    val u = result.getString("user")
+                    val e = result.getString("email")
                     val p = result.getString("pwd")
                     val loginUrl =
-                        "https://tickets.sitegist.net/api/validator/login?email=$u&password=$p"
+                        "https://tickets.sitegist.net/api/validator/login?email=$e&password=$p"
                     Log.d(TAG, "onCreate: $loginUrl")
 
                     val retrofit = Retrofit.Builder()
@@ -103,12 +96,29 @@ class MainActivity : AppCompatActivity() {
                     call.enqueue(object : Callback<Any> {
                         override fun onResponse(call: Call<Any>, response: Response<Any>) {
                             if (response.isSuccessful) {
+                                InfoSheet().show(this@MainActivity) {
+                                    style(SheetStyle.DIALOG)
+                                    displayButtons(false)
+                                    cancelableOutside(false)
+                                    title("Authorization Success")
+                                    drawable(
+                                        IconicsDrawable(
+                                            this@MainActivity,
+                                            GoogleMaterial.Icon.gmd_check
+                                        ).apply {
+                                            sizeDp = 32
+                                        }
+                                    )
+                                    drawableColor(R.color.md_theme_light_primary)
+                                    content("Welcome to board, $u\n\nYour token\n\n${response.body()}")
+                                    onPositive { }
+                                }
                                 Log.d(TAG, "Response: ${response.body()}")
-                                // TODO: Обробка json
+                                // TODO: Parse json
 
-                                // TODO: Запам'ятати користувача
+                                // TODO: Store user
 
-                                // Продовжуємо роботу
+                                // TODO: next steps
                                 supportFragmentManager.beginTransaction()
                                     .replace(R.id.fragment_container, MainFragment())
                                     .addToBackStack(null)
@@ -121,6 +131,27 @@ class MainActivity : AppCompatActivity() {
                                         .commit()
                                 }
                             } else {
+                                InfoSheet().show(this@MainActivity) {
+                                    style(SheetStyle.DIALOG)
+                                    cancelableOutside(false)
+                                    title("Authorization Error")
+                                    drawable(
+                                        IconicsDrawable(
+                                            this@MainActivity,
+                                            GoogleMaterial.Icon.gmd_error_outline
+                                        ).apply {
+                                            sizeDp = 32
+                                        }
+                                    )
+                                    drawableColor(R.color.md_theme_light_error)
+                                    content("Unable to authorize!\n\nСheck that the e-mail and password are correct and try again.")
+                                    onPositive { authForm.show() }
+                                    onNegative {
+                                        activity?.finish()
+                                        exitProcess(0)
+                                    }
+
+                                }
                                 Log.d(TAG, "Error: ${response.code()}")
                                 Log.d(TAG, "Response: ${response.body()}")
                             }
@@ -132,8 +163,8 @@ class MainActivity : AppCompatActivity() {
                     })
                 }
             }
+            authForm.show()
         } else {
-            binding.toolbar.subtitle = "User: ${appPrefs.user}"
             binding.fab.apply {
                 setImageResource(android.R.drawable.ic_menu_camera)
                 visibility = View.VISIBLE
@@ -153,15 +184,31 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+        menu.findItem(R.id.action_settings).icon =
+            IconicsDrawable(this, GoogleMaterial.Icon.gmd_more_vert).apply {
+                colorInt = Color.WHITE
+                sizeDp = 16
+            }
+        menu.findItem(R.id.mnu1).icon =
+            IconicsDrawable(this, GoogleMaterial.Icon.gmd_looks_one).apply {
+                colorInt = Color.parseColor("#006B5B")
+                sizeDp = 16
+            }
+        menu.findItem(R.id.mnu2).icon =
+            IconicsDrawable(this, GoogleMaterial.Icon.gmd_looks_two).apply {
+                colorInt = Color.parseColor("#006B5B")
+                sizeDp = 16
+            }
+        menu.findItem(R.id.mnu3).icon =
+            IconicsDrawable(this, GoogleMaterial.Icon.gmd_looks_3).apply {
+                colorInt = Color.parseColor("#006B5B")
+                sizeDp = 16
+            }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)

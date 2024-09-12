@@ -11,10 +11,9 @@ import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.pixplicity.easyprefs.library.Prefs
 
 class MainFragment : Fragment() {
-
-    private lateinit var webView: WebView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,9 +26,10 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val appPrefs = Utils.getAppPreferences(requireContext())
         val tvGreetings = view.findViewById<TextView>(R.id.tvGreetings)
         tvGreetings.apply {
-            text = "Tickets Validation System"
+            text = "User: ${appPrefs.user}"
             textSize = 6.dp.toFloat()
             textAlignment = View.TEXT_ALIGNMENT_CENTER
             setPadding(16, 16, 16, 16)

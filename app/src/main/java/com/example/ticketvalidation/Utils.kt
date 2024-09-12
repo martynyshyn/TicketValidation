@@ -31,7 +31,7 @@ open class Utils {
                 "",
                 ""
             )
-            prefs.user = Prefs.getString("preference_user", "")
+            prefs.user = Prefs.getString("preference_user", "Unknown")
             prefs.email = Prefs.getString("preference_mode", "")
             prefs.password = Prefs.getString("preference_password", "")
             prefs.token = Prefs.getString("preference_token", "")

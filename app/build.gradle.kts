@@ -63,4 +63,7 @@ dependencies {
 
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
+
+    implementation (libs.iconics.core)
+    implementation (libs.google.material.typeface)
 }
