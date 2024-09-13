@@ -1,7 +1,6 @@
-package com.example.ticketvalidation
+package com.sitegist.ticketvalidation
 
 import android.content.Context
-import android.content.res.Configuration
 import android.util.Patterns
 import androidx.appcompat.app.AppCompatActivity
 import com.pixplicity.easyprefs.library.Prefs
@@ -32,7 +31,7 @@ open class Utils {
                 ""
             )
             prefs.user = Prefs.getString("preference_user", "Unknown")
-            prefs.email = Prefs.getString("preference_mode", "")
+            prefs.email = Prefs.getString("preference_mail", "")
             prefs.password = Prefs.getString("preference_password", "")
             prefs.token = Prefs.getString("preference_token", "")
 

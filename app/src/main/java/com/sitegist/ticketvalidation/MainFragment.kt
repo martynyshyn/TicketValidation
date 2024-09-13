@@ -1,4 +1,4 @@
-package com.example.ticketvalidation
+package com.sitegist.ticketvalidation
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -6,12 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.pixplicity.easyprefs.library.Prefs
 
 class MainFragment : Fragment() {
 

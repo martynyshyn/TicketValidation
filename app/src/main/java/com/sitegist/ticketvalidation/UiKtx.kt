@@ -1,4 +1,4 @@
-package com.example.ticketvalidation
+package com.sitegist.ticketvalidation
 
 import android.content.res.Resources
 import android.util.TypedValue

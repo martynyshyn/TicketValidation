@@ -43,4 +43,12 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="welcome">Ласкаво просимо</string>
+    <string name="auth_success">Успішна авторизація</string>
+    <string name="unable_authorize">Unable to authorize!\n\nСheck that the e-mail and password are correct and try again.</string>
+    <string name="auth_error">Помилка авторизації</string>
+    <string name="error">Помилка!</string>
+    <string name="ticket_invalid">Квиток недійсний!</string>
+    <string name="validation_error">Помилка валідації</string>
+    <string name="ticket_valid">Квиток дійсний!</string>
 </resources>
