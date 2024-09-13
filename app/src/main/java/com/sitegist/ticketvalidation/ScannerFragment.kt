@@ -47,21 +47,6 @@ class ScannerFragment : Fragment() {
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var cameraExecutor: ExecutorService
 
-//    val icoSuccess = activity?.let {
-//        IconicsDrawable(
-//            it.applicationContext, GoogleMaterial.Icon.gmd_check
-//        ).apply {
-//            sizeDp = 32
-//        }
-//    }
-//    val icoError = activity?.let {
-//        IconicsDrawable(
-//            it.applicationContext, GoogleMaterial.Icon.gmd_error_outline
-//        ).apply {
-//            sizeDp = 32
-//        }
-//    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -146,17 +131,17 @@ class ScannerFragment : Fragment() {
                         override fun onResponse(call: Call<Ticket>, response: Response<Ticket>) {
                             if (response.isSuccessful) {
                                 val data = response.body()
-                                InfoSheet().show(requireContext()) {
-                                    style(SheetStyle.DIALOG)
-                                    displayNegativeButton(false)
-                                    cancelableOutside(false)
-                                    title("Success!")
-                                    drawableColor(R.color.md_theme_light_primary)
-                                    if (data != null) {
-                                        content("Ticket # ${data.orderId}")
-                                    }
-                                    onPositive { }
-                                }
+
+                                val mainFragment = MainFragment()
+                                val bundle = Bundle()
+                                bundle.putParcelable("ticket", data)
+                                mainFragment.arguments = bundle
+
+                                parentFragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container, mainFragment)
+                                    .addToBackStack(null)
+                                    .commit()
+
                             } else {
                                 Log.d(TAG, "onResponse: Помилка: ${response.code()}")
                             }
@@ -166,57 +151,7 @@ class ScannerFragment : Fragment() {
                             Log.d(TAG, "onFailure: Помилка мережі: ${t.message}")
                         }
                     })
-
-//                    val retrofit = Retrofit.Builder().baseUrl("https://tickets.sitegist.net")
-//                        .addConverterFactory(GsonConverterFactory.create()).build()
-//                    val apiService = retrofit.create(ValidationService::class.java)
-//                    val call = apiService.fetchData(
-//                        "Bearer ${Prefs.getString("preference_token")}",
-//                        "https://tickets.sitegist.net/api/validator/check?order=${qrCode.order}"
-//                    )
-//                    call.enqueue(object : Callback<Ticket> {
-//                        override fun onResponse(
-//                            call: Call<Ticket>, response: Response<Ticket>
-//                        ) {
-//                            if (response.isSuccessful) {
-//                                InfoSheet().show(requireContext()) {
-//                                    style(SheetStyle.DIALOG)
-//                                    displayNegativeButton(false)
-//                                    cancelableOutside(false)
-//                                    title("Success!")
-////                                    drawable(icoSuccess)
-//                                    drawableColor(R.color.md_theme_light_primary)
-//                                    content("Ticket # ${response.body()?.orderId}")
-//                                    onPositive { }
-//                                }
-//
-//                            } else {
-//                                InfoSheet().show(requireContext()) {
-//                                    style(SheetStyle.DIALOG)
-//                                    cancelableOutside(false)
-//                                    title("Error!")
-////                                    drawable(icoError)
-//                                    drawableColor(R.color.md_theme_light_error)
-//                                    content("Ticket invalid!\n\n${response.body()}")
-//                                    onPositive { }
-//                                    onNegative { }
-//
-//                                }
-//                            }
-//                        }
-//
-//                        override fun onFailure(call: Call<Ticket>, t: Throwable) {
-//                            Toast.makeText(
-//                                activity as AppCompatActivity,
-//                                "Validation Error!",
-//                                Toast.LENGTH_LONG
-//                            ).show()
-//                        }
-//                    })
-
                 }
-
-
             }
         }, onFailure = { exception ->
             exception.printStackTrace()
