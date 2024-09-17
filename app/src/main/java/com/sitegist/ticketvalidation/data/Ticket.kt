@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 data class Ticket(
     val status: String,
     val message: String,
-    val orderId: String
+    val order_id: String
 ) : Parcelable

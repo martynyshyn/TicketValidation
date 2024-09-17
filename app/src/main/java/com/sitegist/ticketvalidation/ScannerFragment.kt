@@ -106,9 +106,9 @@ class ScannerFragment : Fragment() {
                 Log.d(TAG, "qrCodeText: $qrCodeText")
                 val qrCode = parseJsonResponse(qrCodeText)
                 if (qrCode != null) {
-                    Log.d(TAG, "qrCode: $qrCode")
-                    Log.d(TAG, "Link: ${qrCode.link}")
-                    Log.d(TAG, "Order: ${qrCode.order}")
+//                    Log.d(TAG, "qrCode: $qrCode")
+//                    Log.d(TAG, "Link: ${qrCode.link}")
+//                    Log.d(TAG, "Order: ${qrCode.order}")
                     closeCamera()
 
                     // TODO: Send validation request
@@ -122,7 +122,6 @@ class ScannerFragment : Fragment() {
 
                     val token = Prefs.getString("preference_token")
                     val authHeader = "Bearer $token"
-
                     val orderNumber = qrCode.order
 
                     val call = apiService.checkOrder(orderNumber, authHeader)
@@ -131,7 +130,6 @@ class ScannerFragment : Fragment() {
                         override fun onResponse(call: Call<Ticket>, response: Response<Ticket>) {
                             if (response.isSuccessful) {
                                 val data = response.body()
-
                                 val mainFragment = MainFragment()
                                 val bundle = Bundle()
                                 bundle.putParcelable("ticket", data)
