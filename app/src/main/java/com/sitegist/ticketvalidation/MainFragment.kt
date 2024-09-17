@@ -36,7 +36,6 @@ class MainFragment : Fragment() {
         val ctx = requireContext()
 
         if (ticket.status != "") {
-            //Log.d(TAG, "Received: $ticket")
             InfoSheet().show(ctx) {
                 style(SheetStyle.DIALOG)
                 displayNegativeButton(false)

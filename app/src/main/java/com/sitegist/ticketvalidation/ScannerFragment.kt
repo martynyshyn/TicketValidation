@@ -8,9 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.OptIn
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -24,11 +22,6 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import com.maxkeppeler.sheets.core.SheetStyle
-import com.maxkeppeler.sheets.info.InfoSheet
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
-import com.mikepenz.iconics.utils.sizeDp
 import com.pixplicity.easyprefs.library.Prefs
 import com.sitegist.ticketvalidation.data.QRcode
 import com.sitegist.ticketvalidation.data.Ticket
@@ -103,16 +96,11 @@ class ScannerFragment : Fragment() {
         extractTextFromImage(imageProxy, onSuccess = { qrCodeText ->
             if (qrCodeText.isNotEmpty()) {
                 // Parsing QR-code
-                Log.d(TAG, "qrCodeText: $qrCodeText")
                 val qrCode = parseJsonResponse(qrCodeText)
                 if (qrCode != null) {
-//                    Log.d(TAG, "qrCode: $qrCode")
-//                    Log.d(TAG, "Link: ${qrCode.link}")
-//                    Log.d(TAG, "Order: ${qrCode.order}")
                     closeCamera()
 
-                    // TODO: Send validation request
-
+                    // Send validation request
                     val retrofit = Retrofit.Builder()
                         .baseUrl("https://tickets.sitegist.net/")  // Базова URL-адреса
                         .addConverterFactory(GsonConverterFactory.create())
@@ -141,12 +129,12 @@ class ScannerFragment : Fragment() {
                                     .commit()
 
                             } else {
-                                Log.d(TAG, "onResponse: Помилка: ${response.code()}")
+                                Log.d(TAG, "onResponse: ${response.code()}")
                             }
                         }
 
                         override fun onFailure(call: Call<Ticket>, t: Throwable) {
-                            Log.d(TAG, "onFailure: Помилка мережі: ${t.message}")
+                            Log.d(TAG, "onFailure: ${t.message}")
                         }
                     })
                 }

@@ -9,8 +9,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
-import com.sitegist.ticketvalidation.services.AuthorizationService
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.maxkeppeler.sheets.core.SheetStyle
 import com.maxkeppeler.sheets.info.InfoSheet
 import com.maxkeppeler.sheets.input.InputSheet
@@ -23,6 +24,7 @@ import com.mikepenz.iconics.utils.sizeDp
 import com.pixplicity.easyprefs.library.Prefs
 import com.sitegist.ticketvalidation.data.User
 import com.sitegist.ticketvalidation.databinding.ActivityMainBinding
+import com.sitegist.ticketvalidation.services.AuthorizationService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,6 +41,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        delegate.applyDayNight()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -50,13 +55,32 @@ class MainActivity : AppCompatActivity() {
 
         binding.toolbar.setTitleTextColor(Color.WHITE)
         binding.toolbar.setSubtitleTextColor(Color.WHITE)
-        binding.toolbar.setBackgroundColor(resources.getColor(R.color.md_theme_light_primary))
+        binding.toolbar.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                R.color.md_theme_light_primary
+            )
+        )
         binding.toolbar.logo = ContextCompat.getDrawable(this, R.drawable.ic_action_logo)
+        val fab = findViewById<FloatingActionButton>(R.id.fab)
+        fab.setBackgroundColor(
+            Color.RED
+        )
+        fab.setImageDrawable(
+            IconicsDrawable(this, GoogleMaterial.Icon.gmd_camera_alt)
+        )
+        fab.setOnClickListener {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ScannerFragment())
+                .addToBackStack(null)
+                .commit()
+
+        }
 
         val appPrefs = Utils.getAppPreferences(this)
 
         if (appPrefs.token == "") {
-            binding.fab.visibility = View.GONE
+            fab.visibility = View.GONE
             authForm = InputSheet().build(this) {
                 title("Please, authorize")
                 with(InputEditText("user") {
@@ -89,7 +113,6 @@ class MainActivity : AppCompatActivity() {
                     val p = result.getString("pwd")
                     val loginUrl =
                         "https://tickets.sitegist.net/api/validator/login?email=$e&password=$p"
-                    Log.d(TAG, "onCreate: $loginUrl")
 
                     val retrofit = Retrofit.Builder()
                         .baseUrl("https://tickets.sitegist.net")
@@ -118,8 +141,8 @@ class MainActivity : AppCompatActivity() {
                                     onPositive { }
                                 }
                                 // TODO: Store user
-                                Prefs.putString("preference_user",u)
-                                Prefs.putString("preference_mail",e)
+                                Prefs.putString("preference_user", u)
+                                Prefs.putString("preference_mail", e)
                                 Prefs.putString("preference_token", response.body()?.token ?: "")
 
                                 // TODO: next steps
@@ -127,13 +150,6 @@ class MainActivity : AppCompatActivity() {
                                     .replace(R.id.fragment_container, MainFragment())
                                     .addToBackStack(null)
                                     .commit()
-                                binding.fab.setImageResource(android.R.drawable.ic_menu_camera)
-                                binding.fab.setOnClickListener {
-                                    supportFragmentManager.beginTransaction()
-                                        .replace(R.id.fragment_container, ScannerFragment())
-                                        .addToBackStack(null)
-                                        .commit()
-                                }
                             } else {
                                 InfoSheet().show(this@MainActivity) {
                                     style(SheetStyle.DIALOG)
@@ -156,8 +172,6 @@ class MainActivity : AppCompatActivity() {
                                     }
 
                                 }
-                                Log.d(TAG, "Error: ${response.code()}")
-                                Log.d(TAG, "Response: ${response.body()}")
                             }
                         }
 
@@ -169,16 +183,6 @@ class MainActivity : AppCompatActivity() {
             }
             authForm.show()
         } else {
-            binding.fab.apply {
-                setImageResource(android.R.drawable.ic_menu_camera)
-                visibility = View.VISIBLE
-                setOnClickListener {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, ScannerFragment())
-                        .addToBackStack(null)
-                        .commit()
-                }
-            }
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, MainFragment())
                 .addToBackStack(null)
